@@ -46,11 +46,33 @@ public class ByteClassVerify {
                 v.collection();
             });
 
+            // access flag
+            byte[] accessFlag = new byte[2];
+            fileInputStream.read(accessFlag);
+            short aShort = ByteBuffer.wrap(accessFlag).getShort();
+            ACCESS_FLAG_MAP.forEach((k, v) -> {
+                if ((aShort & k) > 0) {
+                    System.out.println(v);
+                }
+            });
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public static Map<Short, String> ACCESS_FLAG_MAP = new HashMap<Short, String>() {{
+        put((short) 0x0001, "ACC_PUBLIC");
+        put((short) 0x0002, "ACC_PRIVATE");
+        put((short) 0x0004, "ACC_PROTECTED");
+        put((short) 0x0008, "ACC_STATIC");
+        put((short) 0x0010, "ACC_FINAL");
+        put((short) 0x0020, "ACC_SUPER");
+        put((short) 0x0040, "ACC_VOLATILE");
+        put((short) 0x0080, "ACC_TRANSTENT");
+        put((short) 0x1000, "ACC_SYNCHETIC");
+        put((short) 0x4000, "ACC_ENUM");
+    }};
 
     public static Map<Integer, AbstractConstantInfo> MAP = new HashMap<Integer, AbstractConstantInfo>() {{
         put(1, new Utf8ConstantInfoCp());
