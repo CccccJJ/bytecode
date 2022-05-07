@@ -11,6 +11,7 @@ public class ByteClassVerify {
 
     public static void main(String[] args) {
         try (FileInputStream fileInputStream = new FileInputStream("/Users/cc/projects/bytecode/src/main/java/ByteCodeDemo.class")) {
+//        try (FileInputStream fileInputStream = new FileInputStream("/Users/cc/projects/bytecode/src/main/java/AbstractConstantInfo.class")) {
 
             // magic number 0xcafebabe(CafeBabe)
             int[] magicNumber = new int[]{0xca, 0xfe, 0xba, 0xbe};
@@ -52,9 +53,77 @@ public class ByteClassVerify {
             short aShort = ByteBuffer.wrap(accessFlag).getShort();
             ACCESS_FLAG_MAP.forEach((k, v) -> {
                 if ((aShort & k) > 0) {
-                    System.out.println(v);
+                    System.out.println(MessageFormat.format("access flag: {0} ", v));
                 }
             });
+
+            // class name index
+            byte[] classNameIndexByte = new byte[2];
+            fileInputStream.read(classNameIndexByte);
+            short classNameIndex = ByteBuffer.wrap(classNameIndexByte).getShort();
+            System.out.println(MessageFormat.format("class name index: {0}", classNameIndex));
+
+            // super class index
+            byte[] superClassNameIndexByte = new byte[2];
+            fileInputStream.read(superClassNameIndexByte);
+            short superClassNameIndex = ByteBuffer.wrap(superClassNameIndexByte).getShort();
+            System.out.println(MessageFormat.format("super class index: {0}", superClassNameIndex));
+
+            // interface count
+            byte[] interfaceCountByte = new byte[2];
+            fileInputStream.read(interfaceCountByte);
+            short interfaceCount = ByteBuffer.wrap(interfaceCountByte).getShort();
+            System.out.println(MessageFormat.format("interface count: {0}", interfaceCount));
+
+            // interface index
+            for (int i = 0; i < interfaceCount; i++) {
+                byte[] interfaceIndexByte = new byte[2];
+                fileInputStream.read(interfaceIndexByte);
+                short interfaceIndex = ByteBuffer.wrap(interfaceIndexByte).getShort();
+                System.out.println(MessageFormat.format("interface {0} index {1}", i, interfaceIndex));
+            }
+
+            // fields count
+            byte[] fieldsCountByte = new byte[2];
+            fileInputStream.read(fieldsCountByte);
+            short fieldsCount = ByteBuffer.wrap(fieldsCountByte).getShort();
+            System.out.println(MessageFormat.format("fields count: {0}", fieldsCount));
+
+            for (int i = 0; i < fieldsCount; i++) {
+                byte[] fieldAccessFlagByte = new byte[2];
+                fileInputStream.read(fieldAccessFlagByte);
+                short fieldAccessFlag = ByteBuffer.wrap(fieldAccessFlagByte).getShort();
+                String fieldAccessFlagStr = ACCESS_FLAG_MAP.get(fieldAccessFlag);
+
+                byte[] fieldNameIndexByte = new byte[2];
+                fileInputStream.read(fieldNameIndexByte);
+                short fieldNameIndex = ByteBuffer.wrap(fieldNameIndexByte).getShort();
+
+                byte[] fieldFlagIndexByte = new byte[2];
+                fileInputStream.read(fieldFlagIndexByte);
+                short fieldFlagIndex = ByteBuffer.wrap(fieldFlagIndexByte).getShort();
+
+                byte[] fieldAttributeCountByte = new byte[2];
+                fileInputStream.read(fieldAttributeCountByte);
+                short fieldAttributeCount = ByteBuffer.wrap(fieldAttributeCountByte).getShort();
+
+                System.out.println(MessageFormat.format("field access flag {0}, field name index #{1}, field flag index #{2}, field attribute count {3}",
+                        fieldAccessFlagStr, fieldNameIndex, fieldFlagIndex, fieldAttributeCount));
+
+                // field attribute
+                for (int x = 0; x < fieldAttributeCount; x++) {
+                    byte[] fieldAttributeIndexByte = new byte[2];
+                    fileInputStream.read(fieldAttributeIndexByte);
+                    short fieldAttributeIndex = ByteBuffer.wrap(fieldAttributeIndexByte).getShort();
+
+                    System.out.println(MessageFormat.format("   field attribute #{0}", fieldAttributeIndex));
+                }
+            }
+
+            // method count
+
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
