@@ -121,8 +121,147 @@ public class ByteClassVerify {
             }
 
             // method count
+            byte[] methodCountByte = new byte[2];
+            fileInputStream.read(methodCountByte);
+            short methodCount = ByteBuffer.wrap(methodCountByte).getShort();
+            System.out.println(MessageFormat.format("method count {0}", methodCount));
 
+            // method info
+            for (int i = 0; i < methodCount - 1; i++) {
+                byte[] methodAccessFlagByte = new byte[2];
+                fileInputStream.read(methodAccessFlagByte);
+                short methodAccessFlag = ByteBuffer.wrap(methodAccessFlagByte).getShort();
+                String methodAccessFlagStr = ACCESS_FLAG_MAP.get(methodAccessFlag);
 
+                byte[] methodNameIndexByte = new byte[2];
+                fileInputStream.read(methodNameIndexByte);
+                short methodNameIndex = ByteBuffer.wrap(methodNameIndexByte).getShort();
+
+                byte[] methodFlagIndexByte = new byte[2];
+                fileInputStream.read(methodFlagIndexByte);
+                short methodFlagIndex = ByteBuffer.wrap(methodFlagIndexByte).getShort();
+
+                byte[] methodAttributeCountByte = new byte[2];
+                fileInputStream.read(methodAttributeCountByte);
+                short methodAttributeCount = ByteBuffer.wrap(methodAttributeCountByte).getShort();
+
+                System.out.println(MessageFormat.format("method access flag {0}, method name index {1}, method flag index {2}, method attribute count {3}",
+                        methodAccessFlagStr, methodNameIndex, methodFlagIndex, methodAttributeCount));
+
+                byte[] attributeNameIndexByte = new byte[2];
+                fileInputStream.read(attributeNameIndexByte);
+                short attributeNameIndex = ByteBuffer.wrap(attributeNameIndexByte).getShort();
+                System.out.println(MessageFormat.format("attribute name index #{0}", attributeNameIndex));
+
+                byte[] attributeLengthByte = new byte[4];
+                fileInputStream.read(attributeLengthByte);
+                int attributeLength = ByteBuffer.wrap(attributeLengthByte).getInt();
+                System.out.println(MessageFormat.format("attribute length {0}", attributeLength));
+
+                byte[] maxStackByte = new byte[2];
+                fileInputStream.read(maxStackByte);
+                short maxStack = ByteBuffer.wrap(maxStackByte).getShort();
+                System.out.println(MessageFormat.format("max stack {0}", maxStack));
+
+                byte[] maxLocalsByte = new byte[2];
+                fileInputStream.read(maxLocalsByte);
+                short maxLocals = ByteBuffer.wrap(maxLocalsByte).getShort();
+                System.out.println(MessageFormat.format("max locals {0}", maxLocals));
+
+                byte[] codeLengthByte = new byte[4];
+                fileInputStream.read(codeLengthByte);
+                int codeLength = ByteBuffer.wrap(codeLengthByte).getInt();
+                System.out.println(MessageFormat.format("code length {0}", codeLength));
+
+                byte[] codeByte1 = new byte[1];
+                fileInputStream.read(codeByte1);
+                byte code1 = ByteBuffer.wrap(codeByte1).get();
+                System.out.println(MessageFormat.format("instruction descriptions {0}  {1}", "aload_0 = 42 (0x2a)", Integer.toHexString(code1)));
+                codeLength -= 1;
+
+                int codeByte2 = fileInputStream.read();
+                byte[] codeByte2IndexByte = new byte[2];
+                fileInputStream.read(codeByte2IndexByte);
+                short codeByte2Index = ByteBuffer.wrap(codeByte2IndexByte).getShort();
+                System.out.println(MessageFormat.format("instruction descriptions {0} {1} indexbyte #{2}",
+                        "invokespecial = 183 (0xb7)", Integer.toHexString(codeByte2), codeByte2Index));
+                codeLength -= 1;
+                codeLength -= 2;
+
+                byte[] codeByte3 = new byte[1];
+                fileInputStream.read(codeByte3);
+                byte code3 = ByteBuffer.wrap(codeByte3).get();
+                System.out.println(MessageFormat.format("instruction descriptions {0}  {1}", "aload_0 = 42 (0x2a)", Integer.toHexString(code3)));
+                codeLength -= 1;
+
+                byte[] codeByte4 = new byte[1];
+                fileInputStream.read(codeByte4);
+                byte code4 = ByteBuffer.wrap(codeByte4).get();
+                System.out.println(MessageFormat.format("instruction descriptions {0}  {1}", "iconst_1 = 4 (0x4)", Integer.toHexString(code4)));
+                codeLength -= 1;
+
+                int code5 = fileInputStream.read();
+                byte[] codeByte5IndexByte = new byte[2];
+                fileInputStream.read(codeByte5IndexByte);
+                short codeByte5Index = ByteBuffer.wrap(codeByte5IndexByte).getShort();
+                System.out.println(MessageFormat.format("instruction descriptions {0}  {1} indexbyte #{2}",
+                        "putfield = 181 (0xb5)", Integer.toHexString(code5), codeByte5Index));
+                codeLength -= 1;
+                codeLength -= 2;
+
+                int code6 = fileInputStream.read();
+                System.out.println(MessageFormat.format("instruction descriptions {0}  {1} ",
+                        "return = 177 (0xb1)", Integer.toHexString(code6)));
+                codeLength -= 1;
+                System.out.println(MessageFormat.format("code length {0}", codeLength));
+
+                byte[] exceptionTableLengthByte = new byte[2];
+                fileInputStream.read(exceptionTableLengthByte);
+                short exceptionTableLength = ByteBuffer.wrap(exceptionTableLengthByte).getShort();
+                System.out.println(MessageFormat.format("exception table length {0}", exceptionTableLength));
+
+                // exception_table 0
+
+                byte[] attributeCountByte = new byte[2];
+                fileInputStream.read(attributeCountByte);
+                short attributeCount = ByteBuffer.wrap(attributeCountByte).getShort();
+                System.out.println(MessageFormat.format("attribute count {0}", attributeCount));
+
+                byte[] attributeNameByte = new byte[2];
+                fileInputStream.read(attributeNameByte);
+                short attributeName = ByteBuffer.wrap(attributeNameByte).getShort();
+                System.out.println(MessageFormat.format("attribute name #{0}", attributeName));
+
+                attributeLengthByte = new byte[4];
+                fileInputStream.read(attributeLengthByte);
+                attributeLength = ByteBuffer.wrap(attributeLengthByte).getShort();
+                System.out.println(MessageFormat.format("attribute length {0}", attributeLength));
+
+                byte[] lineNumberTableLengthByte = new byte[2];
+                fileInputStream.read(lineNumberTableLengthByte);
+                short lineNumberTableLength = ByteBuffer.wrap(lineNumberTableLengthByte).getShort();
+                System.out.println(MessageFormat.format("line number table length {0}", lineNumberTableLength));
+
+                byte[] startPc1Byte = new byte[2];
+                fileInputStream.read(startPc1Byte);
+                short startPc1 = ByteBuffer.wrap(startPc1Byte).getShort();
+                System.out.println(MessageFormat.format("", startPc1));
+
+                byte[] lineNumber1Byte = new byte[2];
+                fileInputStream.read(lineNumber1Byte);
+                short lineNumber1 = ByteBuffer.wrap(lineNumber1Byte).getShort();
+                System.out.println(MessageFormat.format("start pc {0} line number {1}", startPc1, lineNumber1));
+
+                byte[] startPc2Byte = new byte[2];
+                fileInputStream.read(startPc2Byte);
+                short startPc2 = ByteBuffer.wrap(startPc2Byte).getShort();
+
+                byte[] lineNumber2Byte = new byte[2];
+                fileInputStream.read(lineNumber2Byte);
+                short lineNumber2 = ByteBuffer.wrap(lineNumber2Byte).getShort();
+                System.out.println(MessageFormat.format("start pc {0} line number {1}", startPc2, lineNumber2));
+
+            }
 
 
         } catch (Exception e) {
